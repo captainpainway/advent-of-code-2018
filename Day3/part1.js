@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 fs.readFile('input.txt', 'utf8', (err, data) => {
-    linescan(sortCoords(mapData(removeID(arrayify(data)))));
+    countOverlaps(clothArray(sortCoords(mapData(removeID(arrayify(data))))));
 });
 
 const arrayify = (data) => {
@@ -27,11 +27,42 @@ const sortCoords = (coords) => {
     let sortLR = coords.sort((a, b) => {
         return a.x1 - b.x1;
     });
-    let sorted = sortLR.sort((a, b) => {
+    return sortLR.sort((a, b) => {
         return a.y1 - b.y1;
     });
 }
 
-const linescan = (coords) => {
+const clothArray = (coords) => {
+    let clothSize = 1000;
+    let clothArr = [];
+    for (let i = 1; i <= clothSize; i++) { // Rows
+        let clothRow = Array(clothSize).fill('');
+        for (let j = 1; j <= clothSize; j++) { // Columns
+            coords.forEach(c => {
+                if (c.y1 <= i && c.y2 >= i) {
+                    if (c.x1 <= j && c.x2 >= j) {
+                        if (clothRow[j] === '') {
+                            clothRow[j] = 1;
+                        } else {
+                            clothRow[j] = 'X';
+                        }
+                    }
+                }
+            });
+        }
+        clothArr.push(clothRow);
+    }
+    return clothArr;
+}
 
+const countOverlaps = (cloth) => {
+    let count = 0;
+    cloth.forEach(r => {
+        r.forEach(c => {
+            if (c === 'X') {
+                count++;
+            }
+        })
+    });
+    console.log(count);
 }
